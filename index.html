@@ -1,1 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Travel Stories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            padding: 20px 60px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(0,0,0,0.95);
+            padding: 15px 60px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        .nav-menu a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: #ffffff;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: #ffffff;
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section with Carousel */
+        .hero {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .carousel {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+        }
+
+        .slide-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .slide-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7));
+        }
+
+        .slide-content {
+            position: absolute;
+            bottom: 20%;
+            left: 60px;
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .slide-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .slide-title {
+            font-size: 48px;
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .slide-excerpt {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #d0d0d0;
+        }
+
+        .read-more-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .read-more-btn:hover {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        /* Carousel Controls */
+        .carousel-controls {
+            position: absolute;
+            bottom: 50px;
+            right: 60px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 3;
+        }
+
+        .carousel-dots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            width: 30px;
+            border-radius: 4px;
+            background: #ffffff;
+        }
+
+        .carousel-arrows {
+            display: flex;
+            gap: 10px;
+        }
+
+        .arrow {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: transparent;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .arrow:hover {
+            border-color: #ffffff;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Recent Posts Section */
+        .recent-posts {
+            padding: 100px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .post-card {
+            background: #111111;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-content {
+            padding: 30px;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .post-title {
+            font-size: 22px;
+            font-weight: 300;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .post-excerpt {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #999;
+        }
+
+        /* Photography Section */
+        .photography {
+            padding: 100px 60px;
+            background: #0f0f0f;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .photo-item {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.02);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-item:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        .photo-title {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 60px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #666;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .nav-menu {
+                gap: 20px;
+            }
+
+            .slide-title {
+                font-size: 32px;
+            }
+
+            .slide-content {
+                left: 20px;
+                right: 20px;
+            }
+
+            .carousel-controls {
+                right: 20px;
+            }
+
+            .recent-posts,
+            .photography {
+                padding: 60px 20px;
+            }
+
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">WANDERLUST</div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#stories">Stories</a></li>
+                <li><a href="#photography">Photography</a></li>
+                <li><a href="#adventures">Adventures</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Carousel -->
+    <section class="hero" id="home">
+        <div class="carousel">
+            <!-- Slide 1 -->
+            <div class="carousel-slide active">
+                <div class="slide-image" style="background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080"><rect fill="%23222" width="1920" height="1080"/><text x="960" y="540" font-family="Arial" font-size="24" fill="%23666" text-anchor="middle">Your Hero Image 1</text></svg>');">
+                </div>
+                <div class="slide-content">
+                    <span class="slide-category">Adventure</span>
+                    <h1 class="slide-title">Your Journey Begins Here</h1>
+                    <p class="slide-excerpt">Replace this with your own inspiring travel story or adventure description.</p>
+                    <a href="#" class="read-more-btn">Read More</a>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-slide">
+                <div class="slide-image" style="background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080"><rect fill="%23333" width="1920" height="1080"/><text x="960" y="540" font-family="Arial" font-size="24" fill="%23666" text-anchor="middle">Your Hero Image 2</text></svg>');">
+                </div>
+                <div class="slide-content">
+                    <span class="slide-category">Photography</span>
+                    <h1 class="slide-title">Capturing Moments</h1>
+                    <p class="slide-excerpt">Share your photography journey and the stories behind your favorite shots.</p>
+                    <a href="#" class="read-more-btn">Read More</a>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-slide">
+                <div class="slide-image" style="background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080"><rect fill="%23444" width="1920" height="1080"/><text x="960" y="540" font-family="Arial" font-size="24" fill="%23666" text-anchor="middle">Your Hero Image 3</text></svg>');">
+                </div>
+                <div class="slide-content">
+                    <span class="slide-category">Stories</span>
+                    <h1 class="slide-title">Tales from the Road</h1>
+                    <p class="slide-excerpt">Every destination has a story waiting to be told and shared.</p>
+                    <a href="#" class="read-more-btn">Read More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <div class="carousel-controls">
+            <div class="carousel-dots">
+                <span class="dot active" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+            </div>
+            <div class="carousel-arrows">
+                <button class="arrow" onclick="changeSlide(-1)">←</button>
+                <button class="arrow" onclick="changeSlide(1)">→</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Posts Section -->
+    <section class="recent-posts" id="stories">
+        <div class="section-header">
+            <h2 class="section-title">Recent Stories</h2>
+            <p class="section-subtitle">Latest Adventures & Experiences</p>
+        </div>
+        <div class="posts-grid">
+            <!-- Post 1 -->
+            <article class="post-card">
+                <div class="post-image">
+                    <!-- Placeholder for your image -->
+                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #2a2a2a, #3a3a3a); display: flex; align-items: center; justify-content: center; color: #666;">
+                        Your Image Here
+                    </div>
+                </div>
+                <div class="post-content">
+                    <div class="post-meta">
+                        <span>Date Placeholder</span>
+                        <span>Category</span>
+                    </div>
+                    <h3 class="post-title">Your Post Title Here</h3>
+                    <p class="post-excerpt">Add your post excerpt or summary here. This is where you'll share a preview of your travel story or blog post.</p>
+                </div>
+            </article>
+
+            <!-- Post 2 -->
+            <article class="post-card">
+                <div class="post-image">
+                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #3a3a3a, #2a2a2a); display: flex; align-items: center; justify-content: center; color: #666;">
+                        Your Image Here
+                    </div>
+                </div>
+                <div class="post-content">
+                    <div class="post-meta">
+                        <span>Date Placeholder</span>
+                        <span>Category</span>
+                    </div>
+                    <h3 class="post-title">Another Story Title</h3>
+                    <p class="post-excerpt">Another placeholder for your engaging travel content and personal experiences.</p>
+                </div>
+            </article>
+
+            <!-- Post 3 -->
+            <article class="post-card">
+                <div class="post-image">
+                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #2a2a2a, #4a4a4a); display: flex; align-items: center; justify-content: center; color: #666;">
+                        Your Image Here
+                    </div>
+                </div>
+                <div class="post-content">
+                    <div class="post-meta">
+                        <span>Date Placeholder</span>
+                        <span>Category</span>
+                    </div>
+                    <h3 class="post-title">Third Post Title</h3>
+                    <p class="post-excerpt">Share your adventures and experiences with friends and family through your personal blog.</p>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Photography Section -->
+    <section class="photography" id="photography">
+        <div class="section-header">
+            <h2 class="section-title">Photography</h2>
+            <p class="section-subtitle">Visual Stories from Around the World</p>
+        </div>
+        <div class="photo-grid">
+            <!-- Photo 1 -->
+            <div class="photo-item">
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #3a3a3a, #4a4a4a); display: flex; align-items: center; justify-content: center; color: #666;">
+                    Photo Placeholder
+                </div>
+                <div class="photo-overlay">
+                    <span class="photo-title">Location Name</span>
+                </div>
+            </div>
+
+            <!-- Photo 2 -->
+            <div class="photo-item">
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #4a4a4a, #3a3a3a); display: flex; align-items: center; justify-content: center; color: #666;">
+                    Photo Placeholder
+                </div>
+                <div class="photo-overlay">
+                    <span class="photo-title">Location Name</span>
+                </div>
+            </div>
+
+            <!-- Photo 3 -->
+            <div class="photo-item">
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #3a3a3a, #5a5a5a); display: flex; align-items: center; justify-content: center; color: #666;">
+                    Photo Placeholder
+                </div>
+                <div class="photo-overlay">
+                    <span class="photo-title">Location Name</span>
+                </div>
+            </div>
+
+            <!-- Photo 4 -->
+            <div class="photo-item">
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #5a5a5a, #3a3a3a); display: flex; align-items: center; justify-content: center; color: #666;">
+                    Photo Placeholder
+                </div>
+                <div class="photo-overlay">
+                    <span class="photo-title">Location Name</span>
+                </div>
+            </div>
+
+            <!-- Photo 5 -->
+            <div class="photo-item">
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #4a4a4a, #5a5a5a); display: flex; align-items: center; justify-content: center; color: #666;">
+                    Photo Placeholder
+                </div>
+                <div class="photo-overlay">
+                    <span class="photo-title">Location Name</span>
+                </div>
+            </div>
+
+            <!-- Photo 6 -->
+            <div class="photo-item">
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #5a5a5a, #4a4a4a); display: flex; align-items: center; justify-content: center; color: #666;">
+                    Photo Placeholder
+                </div>
+                <div class="photo-overlay">
+                    <span class="photo-title">Location Name</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">© 2024 Your Travel Stories | Personal Blog</p>
+    </footer>
+
+    <script>
+        // Carousel functionality
+        let currentSlideIndex = 1;
+        let autoSlideInterval;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.dot');
+            
+            if (n > slides.length) currentSlideIndex = 1;
+            if (n < 1) currentSlideIndex = slides.length;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[currentSlideIndex - 1].classList.add('active');
+            dots[currentSlideIndex - 1].classList.add('active');
+        }
+
+        function changeSlide(n) {
+            clearInterval(autoSlideInterval);
+            currentSlideIndex += n;
+            showSlide(currentSlideIndex);
+            startAutoSlide();
+        }
+
+        function currentSlide(n) {
+            clearInterval(autoSlideInterval);
+            currentSlideIndex = n;
+            showSlide(currentSlideIndex);
+            startAutoSlide();
+        }
+
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(() => {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            }, 5000);
+        }
+
+        // Start auto-sliding
+        startAutoSlide();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
